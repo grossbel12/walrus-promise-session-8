@@ -1,22 +1,87 @@
-# Walrus Promise
+# Walrus Promise 🦭
 
-Walrus Promise is a public accountability coach that remembers goals, constraints, and commitments across clean browser sessions. Durable facts are encrypted with Seal, stored through Walrus Memory on Walrus Mainnet, and recalled before Qwen generates the next answer.
+> **Accountability that survives the session.**
 
-Live app: [walrus-promise.walrus-promise-lab.workers.dev](https://walrus-promise.walrus-promise-lab.workers.dev)
+[**Launch the live app →**](https://walrus-promise.walrus-promise-lab.workers.dev)
 
-The project is intentionally small: one Cloudflare Worker, one static page, no database, no user accounts, and no paid services.
+Most AI chats are brilliant for five minutes and amnesiac tomorrow. They can help you make a plan, but when you return in a clean session they have forgotten the goal, the obstacle, and the promise that mattered.
 
-## What makes the demo convincing
+**Walrus Promise fixes that.** It is a public accountability coach that turns a conversation into one compact, durable Promise Record. The record is encrypted with Seal, stored through Walrus Memory on Walrus Mainnet, and semantically recalled when it becomes relevant again. The transcript can disappear; the commitment survives.
 
-Press **Run Memory Demo**. The app:
+The result feels less like reopening a chatbot and more like returning to a coach that was actually paying attention.
+
+## The 60-second wow moment
+
+1. Tell the coach: *“My goal is to launch my portfolio Friday. Today I promise to ship the first case study.”*
+2. Wait for the **saved** card and its Walrus blob ID.
+3. Press **New session**. The visible transcript is now empty.
+4. Ask: *“What should I focus on today, and why?”*
+5. Watch the coach recover the promise from Walrus and answer with the exact next step.
+
+No login. No wallet connection for end users. No hidden transcript database.
+
+Prefer zero typing? Press **Run Memory Demo**. The app autonomously:
 
 1. creates a promise in session one;
 2. waits for a Walrus blob receipt;
 3. starts session two without the earlier transcript;
 4. compares a generic baseline against a memory-aware answer;
-5. displays the blob ID and recall distance.
+5. displays the Mainnet blob ID and semantic recall distance.
 
-The ordinary chat follows the same architecture. **New session** clears only the browser transcript; the signed anonymous identity and Walrus memories remain.
+The demo places the generic answer and the memory-aware answer side by side. It makes the value of durable AI memory visible instead of asking judges to trust a diagram.
+
+## Why it is different
+
+| Ordinary chatbot | Walrus Promise |
+| --- | --- |
+| Depends on an ever-growing transcript | Stores only compact, useful facts |
+| Forgets after a clean session | Recalls goals and commitments across sessions |
+| Memory lives in an opaque app database | Encrypted records are anchored on Walrus Mainnet |
+| Generic advice every time | Advice grounded in the user's actual promise |
+| “Trust us, memory works” | Shows blob receipts and recall distance in the UI |
+
+Walrus is not decoration here. Remove Walrus Memory and the product's central experience—the fresh-session follow-up—stops working.
+
+## Where this can be used
+
+Walrus Promise is deliberately focused, but the memory pattern applies far beyond one coach:
+
+- **Creator accountability** — remember publishing targets, blockers, and next drafts.
+- **Study companions** — carry learning goals and progress across tutoring sessions.
+- **Founder and team check-ins** — reconnect weekly conversations to previous commitments.
+- **Career coaching** — remember applications, interview practice, and promised follow-ups.
+- **Habit building** — preserve small commitments without retaining an entire private transcript.
+- **Community bots** — give Discord, Telegram, or web agents portable long-term context.
+- **Agent handoffs** — let a new workflow recover durable facts without sharing raw chat history.
+
+The core primitive is simple: **store the promise, not the noise**.
+
+## Hackathon proof, not hype
+
+The production deployment has been exercised by an automated runner using ten clearly labelled synthetic personas:
+
+- **10/10** isolated Mainnet memory writes reached `done`;
+- **10/10** fresh-session queries recalled the expected marker;
+- **10** unique Walrus blob receipts were produced;
+- the built-in autonomous demo independently completed a Mainnet write and recall;
+- **13/13** unit and integration tests pass.
+
+Synthetic tests are never presented as real users. They prove the system works; the public URL makes organic human testing possible.
+
+## Tiny product, serious stack
+
+Walrus Promise is intentionally compact: one Cloudflare Worker, one static page, no React, no database, no end-user accounts, and no paid services.
+
+- **Interface:** TypeScript + semantic HTML + CSS + Vite
+- **Runtime:** Cloudflare Workers Free
+- **LLM:** `@cf/qwen/qwen3-30b-a3b-fp8`
+- **Memory:** `@mysten-incubation/memwal`
+- **Storage:** Walrus Mainnet
+- **Encryption:** Seal
+- **Retrieval:** MemWal semantic search
+- **Cost target:** $0
+
+Qwen keeps the project outside the OpenAI/Anthropic default and qualifies it for the hackathon's **Beyond the Big Two** track.
 
 ## Architecture
 
@@ -32,13 +97,36 @@ Cloudflare Worker
                     └─ encrypted blob on Walrus Mainnet
 ```
 
-Every user gets a server-derived namespace:
+Every browser receives a signed, anonymous identity cookie. The Worker—not the client—derives its namespace:
 
 ```text
 walrus-promise:user:<sha256(random-browser-identity)>
 ```
 
-The browser cannot select a namespace. A namespace is an organization boundary, so all mapping is enforced server-side. Recalled text is explicitly treated as untrusted factual data, never as instructions.
+The browser cannot select or override a namespace. The current transcript remains in browser session storage and only the last eight messages are sent with a request. Long-term facts live in Walrus Memory.
+
+### One chat turn
+
+1. Validate the message and bounded history.
+2. Derive the server-side user namespace.
+3. Recall up to five semantically relevant memories.
+4. Give Qwen the conversation plus an explicitly untrusted memory block.
+5. Return the reply and, at most, one normalized durable fact.
+6. Queue `remember()` with a deterministic idempotency key.
+7. Poll the protected job endpoint until a Mainnet blob ID is available.
+
+If recall fails, the coach still answers. Memory is an enhancement, never a single point of failure for the conversation.
+
+## Privacy and security boundaries
+
+- Anonymous identities are random UUIDs protected by an HMAC-signed `HttpOnly`, `Secure`, `SameSite=Lax` cookie.
+- Namespaces are derived on the server as `sha256(identity)` and never accepted from the browser.
+- Memory-job polling requires a user-bound HMAC token, preventing cross-user receipt lookup.
+- Recalled memories are treated as untrusted data and cannot override the system prompt.
+- Only goals, constraints, commitments, preferences, and progress may become durable facts.
+- Greetings, secrets, contact details, financial data, medical data, and declined memories are excluded.
+- The revocable MemWal delegate key is a Cloudflare Secret. The owner wallet key never enters the app.
+- Provider errors, prompts, namespaces, and credentials are never returned to the client.
 
 ## Local development
 
@@ -79,7 +167,7 @@ npx wrangler deploy --dry-run
 npm run deploy
 ```
 
-Do not enable a paid Cloudflare plan. The deployment uses the Workers Free plan, Workers AI free allocation, Qwen3, and the Walrus Foundation managed Mainnet relayer.
+Do not enable a paid Cloudflare plan. The reference deployment uses the Workers Free plan, Workers AI free allocation, Qwen3, and the Walrus Foundation managed Mainnet relayer.
 
 ## Environment and secrets
 
@@ -120,7 +208,7 @@ The runner is intentionally gated because it creates real Mainnet memories. Its 
 npm run check
 ```
 
-The test suite covers signed identities, namespace separation, input limits, model-output validation, stored prompt-injection boundaries, job polling, cross-user isolation, memory across clean requests, and the complete autonomous demo.
+The test suite covers signed identities, namespace separation, input limits, both Workers AI response formats, model-output validation, stored prompt-injection boundaries, protected job polling, cross-user isolation, memory across clean requests, production fail-closed behavior, and the complete autonomous demo.
 
 ## Official references
 
@@ -130,4 +218,8 @@ The test suite covers signed identities, namespace separation, input limits, mod
 - [Cloudflare Workers guide](https://docs.wal.app/walrus-memory/sdk/cloudflare-workers)
 - [Sui documentation](https://docs.sui.io/)
 
-Walrus Promise uses Qwen rather than OpenAI or Anthropic and is eligible for the hackathon's **Beyond the Big Two** track.
+## Built for The Walrus Sessions
+
+Walrus Promise was built for **Chatbots That Remember**. It demonstrates the property the track is really about: not merely writing a blob, but using durable decentralized memory to make the next conversation materially better.
+
+If the first generation of chatbots could talk, the next generation should be able to **keep a promise**.
