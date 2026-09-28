@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Walrus Promise is an accountability coach with portable, encrypted memory on Walrus Mainnet."
+    />
+    <title>Walrus Promise — a coach that remembers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Walrus Promise home">
+          <span class="brand-mark">W</span>
+          <span>Walrus Promise</span>
+        </a>
+        <div class="status-row">
+          <span class="status-pill"><i class="dot dot-blue"></i><span id="network-label">Walrus</span></span>
+          <span class="status-pill"><i class="dot" id="memory-dot"></i><span id="memory-label">Checking memory</span></span>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">ACCOUNTABILITY THAT SURVIVES THE SESSION</p>
+          <h1>Your goals deserve<br /><em>a memory.</em></h1>
+          <p class="hero-copy">
+            Tell the coach what you are building and what gets in the way. Return later — it remembers
+            the promise, not the transcript.
+          </p>
+        </div>
+        <button class="demo-button" id="demo-button">
+          <span>Run Memory Demo</span>
+          <small>Two sessions · zero typing</small>
+        </button>
+      </section>
+
+      <section class="workspace">
+        <div class="chat-panel">
+          <div class="panel-head">
+            <div>
+              <span class="panel-kicker">LIVE COACH</span>
+              <h2>Make one honest promise.</h2>
+            </div>
+            <button class="quiet-button" id="new-session">New session</button>
+          </div>
+
+          <div class="messages" id="messages" aria-live="polite">
+            <article class="message assistant">
+              <div class="avatar">W</div>
+              <div class="bubble">
+                What are you trying to move forward, and what is the smallest action you can promise today?
+              </div>
+            </article>
+          </div>
+
+          <form class="composer" id="chat-form">
+            <textarea
+              id="message-input"
+              maxlength="2000"
+              rows="1"
+              placeholder="I want to launch…"
+              aria-label="Message"
+              required
+            ></textarea>
+            <button type="submit" id="send-button" aria-label="Send message">↗</button>
+          </form>
+          <p class="privacy-note">Encrypted with Seal · Stored on Walrus · Never used as an instruction</p>
+        </div>
+
+        <aside class="memory-panel">
+          <div class="panel-head compact">
+            <div>
+              <span class="panel-kicker">MEMORY RECEIPTS</span>
+              <h2>Proof, not a promise.</h2>
+            </div>
+          </div>
+          <div class="memory-list" id="memory-list">
+            <div class="empty-state">
+              <span class="empty-icon">◎</span>
+              <p>Relevant memories and Mainnet receipts will appear here.</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="demo-panel" id="demo-panel" hidden>
+        <div class="demo-head">
+          <div>
+            <span class="panel-kicker">AUTONOMOUS PROOF</span>
+            <h2>Same question. A different answer.</h2>
+          </div>
+          <span class="demo-state" id="demo-state">Preparing session one…</span>
+        </div>
+        <div class="demo-grid" id="demo-grid"></div>
+      </section>
+
+      <footer>
+        <span>Built for Chatbots That Remember</span>
+        <span>Qwen3 · Walrus Memory · Sui · Seal</span>
+      </footer>
+    </main>
+    <script type="module" src="/src/app.ts"></script>
+  </body>
+</html>
