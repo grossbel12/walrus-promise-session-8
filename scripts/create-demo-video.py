@@ -58,11 +58,11 @@ def title_frame(progress: float) -> Image.Image:
     pulse = round(90 + 35 * math.sin(progress * math.pi))
     draw.ellipse((1420, -340, 2080, 320), outline=(201, 255, 74, pulse), width=3)
     draw.text((120, 120), "WALRUS PROMISE", font=font(28, True), fill=ACID)
-    draw.text((120, 305), "A chatbot that", font=font(106, True), fill=WHITE)
-    draw.text((120, 420), "remembers the promise.", font=font(106, True), fill=ACID)
-    draw.text((125, 600), "Qwen3 intelligence. Encrypted memory. Walrus Mainnet proof.", font=font(36), fill=MUTED)
+    draw.text((120, 305), "One promise.", font=font(106, True), fill=WHITE)
+    draw.text((120, 420), "Two sessions. Real memory.", font=font(94, True), fill=ACID)
+    draw.text((125, 600), "See an accountability coach remember after the chat disappears.", font=font(36), fill=MUTED)
     draw.rounded_rectangle((120, 760, 792, 848), radius=44, outline=ACID, width=2)
-    draw.text((165, 784), "REAL USERS · FRESH SESSIONS · BLOB RECEIPTS", font=font(25, True), fill=WHITE)
+    draw.text((165, 784), "QWEN3 · WALRUS MEMORY · MAINNET RECEIPTS", font=font(25, True), fill=WHITE)
     return frame
 
 
@@ -70,10 +70,10 @@ def final_frame(progress: float) -> Image.Image:
     frame = Image.new("RGB", (WIDTH, HEIGHT), BG)
     draw = ImageDraw.Draw(frame)
     draw.text((120, 100), "PROOF, NOT A PROMISE.", font=font(30, True), fill=ACID)
-    stats = [("3/3", "REAL TESTERS"), ("10/10", "SYNTHETIC MAINNET CHECKS"), ("13+", "VERIFIED BLOBS")]
+    stats = [("MAINNET", "DURABLE MEMORY"), ("QWEN3", "INTELLIGENT COACH"), ("ZERO", "CHAT DATABASES")]
     for index, (value, label) in enumerate(stats):
         x = 120 + index * 580
-        draw.text((x, 245), value, font=font(112, True), fill=WHITE)
+        draw.text((x, 260), value, font=font(64, True), fill=WHITE)
         draw.text((x + 4, 375), label, font=font(23, True), fill=MUTED)
     draw.line((120, 510, 1800, 510), fill="#2b3130", width=2)
     draw.text((120, 600), "Try it live", font=font(26, True), fill=ACID)
@@ -101,10 +101,11 @@ def main() -> None:
 
     scenes = [
         (4.0, lambda p: title_frame(p)),
-        (6.5, lambda p: screenshot_frame(evidence / "tester-01-success.png", "A promise survives a fresh session.", "SAVED ON WALRUS  ·  RECALLED AFTER NEW SESSION  ·  DISTANCE 0.703", p, ACID)),
-        (6.5, lambda p: screenshot_frame(evidence / "tester-02-success.png", "The coach remembers what matters.", "ANONYMOUS REAL-USER TEST  ·  MAINNET BLOB RECEIPT  ·  DISTANCE 0.729", p, BLUE)),
-        (5.0, lambda p: screenshot_frame(evidence / "tester-03-initial-failure.png", "A real tester found a failure.", "TRANSIENT AI ERROR + DELAYED RELAYER WRITE", p, ORANGE)),
-        (7.0, lambda p: screenshot_frame(evidence / "tester-03-success-after-fix.png", "We fixed it. The promise came back.", "RETRY ADDED  ·  HONEST PENDING STATE  ·  FRESH-SESSION RECALL 0.764", p, ACID)),
+        (5.0, lambda p: screenshot_frame(evidence / "tester-02-success.png", "1. Make one honest promise.", "THE COACH EXTRACTS ONE USEFUL GOAL OR COMMITMENT", p, ACID)),
+        (5.0, lambda p: screenshot_frame(evidence / "tester-01-success.png", "2. Walrus stores it for the long term.", "ENCRYPTED WITH SEAL  ·  STORED ON WALRUS  ·  CONFIRMED BY BLOB ID", p, BLUE)),
+        (5.0, lambda p: screenshot_frame(evidence / "tester-03-success-after-fix.png", "3. Start a completely fresh session.", "THE LOCAL TRANSCRIPT DISAPPEARS  ·  THE ANONYMOUS IDENTITY REMAINS", p, ACID)),
+        (5.0, lambda p: screenshot_frame(evidence / "tester-03-success-after-fix.png", "4. Ask: What did I promise to do?", "THE WORKER SEMANTICALLY RECALLS THE RELEVANT WALRUS MEMORY", p, BLUE)),
+        (5.0, lambda p: screenshot_frame(evidence / "tester-02-success.png", "5. Get a personal answer, not a blank slate.", "THE COACH RESPONDS WITH THE EXACT PROMISE FROM THE EARLIER SESSION", p, ACID)),
         (7.0, lambda p: final_frame(p)),
     ]
 
