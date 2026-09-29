@@ -5,6 +5,7 @@
 - **Public repository:** https://github.com/grossbel12/walrus-promise-session-8
 - **Demo video:** https://youtu.be/Wyqzu01JC2c
 - **Published Medium article:** https://grossbelbir.medium.com/walrus-promise-technical-article-265c695ded5b
+- **Published X post:** https://x.com/grossbel12/status/2104863850051059955
 - **Primary LLM:** `@cf/qwen/qwen3-30b-a3b-fp8`
 - **LLM runtime:** Cloudflare Workers AI
 - **Memory:** `@mysten-incubation/memwal`, managed Mainnet relayer
