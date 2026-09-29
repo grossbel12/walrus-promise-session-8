@@ -30,6 +30,20 @@ function aiService(env: AppEnv): AiService | null {
   return env.AI ? new WorkersAiService(env.AI) : null;
 }
 
+async function chatWithRetry(
+  ai: AiService,
+  history: ChatMessage[],
+  memories: Awaited<ReturnType<typeof recallSafe>>["memories"],
+) {
+  try {
+    return await ai.chat(history, memories);
+  } catch {
+    // Workers AI can occasionally return a transient error or malformed response.
+    // One bounded retry improves reliability without risking duplicate memory writes.
+    return ai.chat(history, memories);
+  }
+}
+
 async function ensureIdentity(c: Context<AppBindings>): Promise<string> {
   const secret = cookieSecret(c.env);
   if (!secret) throw new Error("COOKIE_SECRET is not configured");
@@ -104,14 +118,24 @@ app.post("/api/chat", async (c) => {
     { role: "user", content: parsed.data.message },
   ];
 
+  let turn;
   try {
-    const turn = await ai.chat(history, recalled.memories);
-    let write: { status: string; jobId?: string; jobToken?: string; statement?: string } = {
-      status: memory ? "skipped" : "unavailable",
-    };
+    turn = await chatWithRetry(ai, history, recalled.memories);
+  } catch (error) {
+    console.error("chat_failed", {
+      name: error instanceof Error ? error.name : "UnknownError",
+      message: error instanceof Error ? error.message.slice(0, 300) : "Unknown failure",
+    });
+    return c.json({ error: "The coach could not answer right now. Please retry." }, 502);
+  }
 
-    if (memory && turn.memory) {
-      const text = `[${turn.memory.category.toUpperCase()}] ${turn.memory.statement}`;
+  let write: { status: string; jobId?: string; jobToken?: string; statement?: string } = {
+    status: memory ? "skipped" : "unavailable",
+  };
+
+  if (memory && turn.memory) {
+    const text = `[${turn.memory.category.toUpperCase()}] ${turn.memory.statement}`;
+    try {
       const accepted = await memory.remember(text, namespace, {
         idempotencyKey: await sha256(`${namespace}:${text}`),
       });
@@ -122,21 +146,21 @@ app.post("/api/chat", async (c) => {
         jobToken: secret ? await signMemoryJob(identity, accepted.job_id, secret) : undefined,
         statement: text,
       };
+    } catch (error) {
+      console.error("memory_write_failed", {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message.slice(0, 300) : "Unknown failure",
+      });
+      write = { status: "failed", statement: text };
     }
-
-    return c.json({
-      reply: turn.reply,
-      recalled: recalled.memories,
-      memoryOnline: recalled.online,
-      write,
-    });
-  } catch (error) {
-    console.error("chat_failed", {
-      name: error instanceof Error ? error.name : "UnknownError",
-      message: error instanceof Error ? error.message.slice(0, 300) : "Unknown failure",
-    });
-    return c.json({ error: "The coach could not answer right now" }, 502);
   }
+
+  return c.json({
+    reply: turn.reply,
+    recalled: recalled.memories,
+    memoryOnline: recalled.online,
+    write,
+  });
 });
 
 app.get("/api/memory-jobs/:jobId", async (c) => {
