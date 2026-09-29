@@ -8,7 +8,7 @@
 - [ ] Run the gated 10-persona evidence script once.
 - [ ] Verify 10/10 writes and 10/10 fresh-session recalls.
 - [ ] Record agent/account ID and Mainnet blob count.
-- [ ] Capture before/after screenshots and a short demo video.
+- [x] Capture before/after screenshots and publish a short demo video.
 - [x] Complete three consented anonymous real-user tests and document the discovered friction point.
 - [ ] Publish a public GitHub repository with setup instructions.
 - [ ] Finalize and publish the Medium or Inkray article.

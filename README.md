@@ -4,6 +4,8 @@
 
 [**Launch the live app →**](https://walrus-promise.walrus-promise-lab.workers.dev)
 
+[**Watch the 36-second demo →**](https://youtu.be/Wyqzu01JC2c)
+
 Most AI chats are brilliant for five minutes and amnesiac tomorrow. They can help you make a plan, but when you return in a clean session they have forgotten the goal, the obstacle, and the promise that mattered.
 
 **Walrus Promise fixes that.** It is a public accountability coach that turns a conversation into one compact, durable Promise Record. The record is encrypted with Seal, stored through Walrus Memory on Walrus Mainnet, and semantically recalled when it becomes relevant again. The transcript can disappear; the commitment survives.
