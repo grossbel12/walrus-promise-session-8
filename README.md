@@ -1,5 +1,7 @@
 # Walrus Promise 🦭
 
+<img src="public/walrus-promise-logo.png" alt="Walrus Promise logo" width="140" />
+
 > **Accountability that survives the session.**
 
 [**Launch the live app →**](https://walrus-promise.walrus-promise-lab.workers.dev)
