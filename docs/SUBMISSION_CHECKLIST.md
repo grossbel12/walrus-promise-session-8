@@ -1,7 +1,7 @@
 # Submission checklist
 
 - [ ] Confirm eligibility and DeepSurge registration.
-- [ ] Create a dedicated Sessions wallet address.
+- [x] Create a dedicated Sessions wallet address.
 - [ ] Create the production MemWalAccount and revocable delegate key.
 - [ ] Deploy to a public `workers.dev` URL with Free plan only.
 - [ ] Run `/api/health` and confirm `mainnet`, `qwen3-30b-a3b-fp8`, and `memory: online`.
