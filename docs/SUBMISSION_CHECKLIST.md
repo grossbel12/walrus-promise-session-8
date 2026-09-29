@@ -11,7 +11,7 @@
 - [x] Capture before/after screenshots and publish a short demo video.
 - [x] Complete three consented anonymous real-user tests and document the discovered friction point.
 - [ ] Publish a public GitHub repository with setup instructions.
-- [ ] Finalize and publish the Medium or Inkray article.
+- [x] Finalize and publish the Medium article.
 - [ ] Submit one friction point and one improvement idea in the feedback form.
 - [ ] Join the Walrus Discord.
 - [ ] Share the article on X under the session announcement with `@WalrusProtocol` and `#WalrusMemory`.
