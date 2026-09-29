@@ -1,5 +1,9 @@
 # Walrus Memory feedback draft
 
+## Published GitHub ticket
+
+- [MystenLabs/MemWal #1053 — Add progress callbacks to waitForRememberJob for UI status](https://github.com/MystenLabs/MemWal/issues/1053)
+
 ## Friction point
 
 The durable write path is asynchronous, but the UI-facing distinction between `accepted`, `uploaded`, `done`, and immediately recallable is easy to misunderstand. Even after a job reaches a terminal success state, retrieval may briefly lag. A chatbot demo therefore needs custom polling, a pending state, and defensive re-query logic to avoid claiming that a memory is available too early.
