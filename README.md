@@ -58,6 +58,8 @@ The core primitive is simple: **store the promise, not the noise**.
 
 ## Hackathon proof, not hype
 
+Three consented anonymous volunteers completed the public Mainnet write → fresh session → recall flow. All three final checks passed. The [real-user test report](docs/REAL_USER_TEST_REPORT.md) includes their evidence, honest limitations, and the reliability improvement triggered by the third tester's initial failure.
+
 The production deployment has been exercised by an automated runner using ten clearly labelled synthetic personas:
 
 - **10/10** isolated Mainnet memory writes reached `done`;
@@ -66,7 +68,7 @@ The production deployment has been exercised by an automated runner using ten cl
 - the built-in autonomous demo independently completed a Mainnet write and recall;
 - **13/13** unit and integration tests pass.
 
-Synthetic tests are never presented as real users. They prove the system works; the public URL makes organic human testing possible.
+Synthetic tests are never presented as real users. They prove the integration repeatedly; the three volunteer tests separately demonstrate human use.
 
 ## Tiny product, serious stack
 

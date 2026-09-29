@@ -32,6 +32,14 @@ The second challenge is memory quality. Saving every sentence would create noise
 
 The third challenge is honest evidence. The automated test runner creates ten synthetic personas to verify ten Mainnet writes and fresh-session recalls. Those personas are explicitly labelled synthetic; they prove the storage loop, not real-user adoption.
 
+## What three real testers found
+
+Three volunteers then tested the public deployment and consented to anonymous use of their screenshots. All three ultimately completed the full proof loop: a confirmed Mainnet blob, a clean session, and a correct recall. Their semantic recall distances were 0.703, 0.729, and 0.764. This human evidence is reported separately from the 10/10 synthetic runner results.
+
+The most useful test was not initially successful. The third tester hit a transient coach error and later saw writes remain pending while the managed relayer was reachable but not write-ready. That failure revealed that the interface was calling an accepted asynchronous job “saved” too early. The deployed fix added a bounded AI retry, isolated memory-write failure from the chat response, extended polling, surfaced relayer degradation, and reserved `SAVED` for jobs with a final blob ID. The same tester then repeated the flow successfully and recalled the stored promise in a fresh session.
+
+This was exactly the kind of feedback the project needed: not a cosmetic opinion, but a real failure that made the durability claim more accurate.
+
 ## What changed
 
 Walrus Memory changes the coach from a blank slate into a continuing relationship. The interesting moment is not when a dashboard says that a blob exists. It is when a user asks a vague question days later and receives an answer anchored in a promise they made before the current conversation existed.
