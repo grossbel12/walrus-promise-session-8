@@ -36,7 +36,7 @@ export interface MemoryStatus {
 }
 
 export interface MemoryClient {
-  health(): Promise<{ status: string; version?: string }>;
+  health(): Promise<{ status: string; version?: string; write_ready?: boolean }>;
   recall(input: {
     query: string;
     limit?: number;

@@ -80,8 +80,15 @@ app.get("/api/health", async (c) => {
 
   if (memoryReady) {
     try {
-      const client = createMemoryClient(c.env, "walrus-promise:health");
-      memoryOnline = Boolean(client && (await client.health()).status);
+      if (c.env.APP_ENV === "production") {
+        const serverUrl = c.env.MEMWAL_SERVER_URL ?? "https://relayer.memory.walrus.xyz";
+        const response = await fetch(`${serverUrl}/health`);
+        const health = await response.json<{ status?: string; write_ready?: boolean }>();
+        memoryOnline = response.ok && health.status === "ok" && health.write_ready !== false;
+      } else {
+        const client = createMemoryClient(c.env, "walrus-promise:health");
+        memoryOnline = Boolean(client && (await client.health()).status);
+      }
     } catch {
       memoryOnline = false;
     }

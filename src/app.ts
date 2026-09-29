@@ -43,7 +43,7 @@ function addMessage(role: Role, content: string): void {
   messagesElement.scrollTop = messagesElement.scrollHeight;
 }
 
-function showMemory(kind: "saved" | "recalled", text: string, detail: string): void {
+function showMemory(kind: "saved" | "recalled" | "pending", text: string, detail: string): HTMLElement {
   memoryList.querySelector(".empty-state")?.remove();
   const card = document.createElement("article");
   card.className = `memory-card ${kind}`;
@@ -53,10 +53,23 @@ function showMemory(kind: "saved" | "recalled", text: string, detail: string): v
     <code>${escapeHtml(detail)}</code>
   `;
   memoryList.insertBefore(card, memoryList.firstChild);
+  return card;
 }
 
-async function pollJob(jobId: string, jobToken: string, statement: string): Promise<void> {
-  for (let attempt = 0; attempt < 20; attempt += 1) {
+function updateMemoryCard(card: HTMLElement, state: string, detail: string): void {
+  const label = card.querySelector<HTMLSpanElement>(".memory-card-head span");
+  const code = card.querySelector<HTMLElement>("code");
+  if (label) label.textContent = state;
+  if (code) code.textContent = detail;
+  card.classList.toggle("saved", state === "saved");
+}
+
+async function pollJob(
+  jobId: string,
+  jobToken: string,
+  card: HTMLElement,
+): Promise<void> {
+  for (let attempt = 0; attempt < 90; attempt += 1) {
     await new Promise((resolve) => setTimeout(resolve, 1_000));
     const response = await fetch(
       `/api/memory-jobs/${encodeURIComponent(jobId)}?token=${encodeURIComponent(jobToken)}`,
@@ -64,11 +77,15 @@ async function pollJob(jobId: string, jobToken: string, statement: string): Prom
     if (!response.ok) return;
     const result = (await response.json()) as { status: string; blobId?: string };
     if (result.status === "done") {
-      showMemory("saved", statement, `blob ${result.blobId ?? "confirmed"}`);
+      updateMemoryCard(card, "saved", `blob ${result.blobId ?? "confirmed"}`);
       return;
     }
-    if (result.status === "failed" || result.status === "not_found") return;
+    if (result.status === "failed" || result.status === "not_found") {
+      updateMemoryCard(card, "save failed", "Walrus relayer did not persist this memory · retry later");
+      return;
+    }
   }
+  updateMemoryCard(card, "still processing", `job ${jobId.slice(0, 12)}… · relayer delay`);
 }
 
 async function sendMessage(message: string): Promise<void> {
@@ -96,8 +113,14 @@ async function sendMessage(message: string): Promise<void> {
       showMemory("recalled", memory.text, `distance ${memory.distance.toFixed(3)} · ${memory.blobId}`);
     }
     if (result.write.jobId && result.write.jobToken && result.write.statement) {
-      showMemory("saved", result.write.statement, `job ${result.write.jobId.slice(0, 12)}… pending`);
-      void pollJob(result.write.jobId, result.write.jobToken, result.write.statement);
+      const card = showMemory(
+        "pending",
+        result.write.statement,
+        `job ${result.write.jobId.slice(0, 12)}… processing`,
+      );
+      void pollJob(result.write.jobId, result.write.jobToken, card);
+    } else if (result.write.status === "failed") {
+      showMemory("pending", result.write.statement ?? "Memory", "save failed · retry later");
     }
   } catch (error) {
     addMessage("assistant", error instanceof Error ? error.message : "The coach is unavailable.");
